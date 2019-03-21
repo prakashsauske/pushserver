@@ -57,7 +57,7 @@ var sendNotificationForAll = function(){
   queueSvc.getMessages(subscriberQueueName, {numOfMessages: 15, visibilityTimeout: 5 * 60}, function(error, results, getResponse){
     if(!error){
       // Messages retrieved
-      for(var index in result){
+      for(var index in results){
         // text is available in result[index].messageText
         var message = results[index];
         console.log(message);
