@@ -9,7 +9,7 @@ app.use(expres.static(path.join(__dirname,'app')));
 app.use(bodyParser.json());
 
 const alretsQueueName = "wow-msg-queue";
-const subscriberQueueName = "wowsubmessage";
+const subscriberQueueName = "wow-sub-message";
 
 const successCd = 200;
 const errorCd = 500;
@@ -54,7 +54,7 @@ var sendNotification = function(subscription, payload){
 
 
 var sendNotificationForAll = function(){
-  queueSvc.getMessages('subscriberQueueName', {numOfMessages: 15, visibilityTimeout: 5 * 60}, function(error, results, getResponse){
+  queueSvc.getMessages(subscriberQueueName, {numOfMessages: 15, visibilityTimeout: 5 * 60}, function(error, results, getResponse){
     if(!error){
       // Messages retrieved
       for(var index in result){
@@ -84,12 +84,14 @@ app.get('/queue', function (req, res) {
   if(msg == undefined || msg == null){
     msg = 'SOH Alert';
   }
+  console.error(alretsQueueName);
   queueSvc.createMessage(alretsQueueName, msg, function (error, results, response) {
     if (!error) {
       // Message inserted
       status = successCd;
     }
   });
+  console.error(msg);
   sendNotificationForAll();
   res.send(JSON.stringify({
     statusCode: status
