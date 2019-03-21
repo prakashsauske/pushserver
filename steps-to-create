@@ -1,0 +1,9 @@
+npm init
+
+npm install web-push express body-parser
+
+create index.js and write the node code
+
+create vapid key using following command
+
+./node_modules/.bin/web-push generate-vapid-keys
