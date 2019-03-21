@@ -38,7 +38,7 @@ app.post('/subscribe', (req, res) => {
   console.error(subscriberQueueName);
 
   //Pass object into sendnotification function
-  queueSvc.createMessage(subscriberQueueName, subscription, function (error, results, response) {
+  queueSvc.createMessage(subscriberQueueName, JSON.stringify(subscription), function (error, results, response) {
   console.error(error);
 
     if (!error) {
