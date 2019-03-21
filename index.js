@@ -34,8 +34,13 @@ app.post('/subscribe', (req, res) => {
   //create payload
   const payload = JSON.stringify({ title: 'Successfully Subscribed With Push Notifications' });
 
+  console.error(subscription);
+  console.error(subscriberQueueName);
+
   //Pass object into sendnotification function
   queueSvc.createMessage(subscriberQueueName, subscription, function (error, results, response) {
+  console.error(error);
+
     if (!error) {
       // Message inserted
       status = successCd;
@@ -47,8 +52,9 @@ app.post('/subscribe', (req, res) => {
 
 
 var sendNotification = function(subscription, payload){
+  console.error(subscription);
   webpush.sendNotification(subscription, payload).catch(err => {
-    console.log(err);
+    console.error(err);
   });
 }
 
@@ -60,7 +66,7 @@ var sendNotificationForAll = function(){
       for(var index in results){
         // text is available in result[index].messageText
         var message = results[index];
-        console.log(message);
+        console.error(message);
         sendNotification(message, JSON.stringify({ title: 'Got a Push Notifications' }));
       }
     }
