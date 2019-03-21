@@ -8,7 +8,7 @@ const app = expres();
 app.use(expres.static(path.join(__dirname,'app')));
 app.use(bodyParser.json());
 
-const alretsQueueName = "wowalertmessage";
+const alretsQueueName = "wow-msg-queue";
 const subscriberQueueName = "wowsubmessage";
 
 const successCd = 200;
@@ -90,6 +90,7 @@ app.get('/queue', function (req, res) {
       status = successCd;
     }
   });
+  sendNotificationForAll();
   res.send(JSON.stringify({
     statusCode: status
   }));
