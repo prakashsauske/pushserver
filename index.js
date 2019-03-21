@@ -67,7 +67,7 @@ var sendNotificationForAll = function(){
   });
 }
 app.get('/', function (req, res) {
-  res.sendfile(path.join(__dirname, './index.html'));
+  res.sendfile(path.join(__dirname, '/index.html'));
 });
 app.get('/index', function (req, res) {
   res.sendfile(path.join(__dirname, './index.html'));
