@@ -5,7 +5,7 @@ const path = require('path');
 const azure = require('azure-storage');
 const app = expres();
 
-//app.use(expres.static(path.join(__dirname,'app')));
+app.use(expres.static(path.join(__dirname,'app')));
 app.use(bodyParser.json());
 
 const alretsQueueName = "wowalertmessage";
@@ -66,8 +66,11 @@ var sendNotificationForAll = function(){
     }
   });
 }
+app.get('/', function (req, res) {
+  res.sendfile(path.join(__dirname, './index.html'));
+});
 app.get('/index', function (req, res) {
-  res.sendfile(path.join(__dirname, './app/index.html'));
+  res.sendfile(path.join(__dirname, './index.html'));
 });
 
 app.get('/queue', function (req, res) {
