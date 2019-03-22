@@ -46,8 +46,8 @@ router.get('/queue', (req, res) => {
   console.error('alretsQueueName'+alretsQueueName);
   queueSvc.createMessage(alretsQueueName,msg, function (error, results, response) {
     console.error('error = '+error);
-    console.error('results = '+results);
-    console.error('response = '+response);
+    console.error('results = '+JSON.stringify(results));
+    console.error('response = '+JSON.stringify(response));
     if (!error) {
       // Message inserted
       status = 201;
@@ -56,7 +56,7 @@ router.get('/queue', (req, res) => {
       });
     }
   });
-  console.error('msg'+msg);
+  //console.error('msg'+msg);
  /*  
   queueSvc.createMessage(alretsQueueName, JSON.stringify({notify:msg}), function (error, results, response) {
     console.error(error);
