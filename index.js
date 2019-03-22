@@ -64,7 +64,7 @@ router.get('/queue', (req, res) => {
 
 router.get('/viewTbl', (req, res) => {
   var status = 200;
-  
+
   console.error('viewTbl');
   getSubscriptionFromTbl();
   res.status(200).json({
@@ -120,11 +120,49 @@ router.post('/subscribe', (req, res) => {
   res.status(201).json({});
 });
 
+router.post('/deleteSubscription', (req, res) => {
+  //Get Push Subcription object
+  //console.log(req);
+  const data = req.body;
+  try {
+    if (data && JSON.parse(data)) {
+      var result = JSON.parse(data);
+      for (var index in result.entries) {
+        // text is available in result[index].messageText
+        var message = result.entries[index];
+        console.error('message' + message);
+        try {
+          console.error(message.PartitionKey);
+          console.error(message.RowKey);
+          var task = {
+            PartitionKey: {'_':message.PartitionKey},
+            RowKey: {'_': message.RowKey}
+          };
+          
+          tableSvc.deleteEntity('userSubscription', task, function(error, response){
+            if(!error) {
+              // Entity deleted
+              console.error('entry deleted')
+            }
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
+  //send 201 - resource created
+  res.status(201).json({});
+});
+
 var saveSubscriptionInTbl = function (subscription) {
   var entGen = azure.TableUtilities.entityGenerator;
   var task = {
     PartitionKey: entGen.String('subscriptionInfo'),
-    RowKey: entGen.String('1'),
+    RowKey: entGen.String(subscription.endpoint),
     description: entGen.String('subscription'),
     data: entGen.String(JSON.stringify(subscription)),
     dueDate: entGen.DateTime(new Date(Date.UTC(2015, 6, 20))),
@@ -148,8 +186,8 @@ var getSubscriptionFromTbl = function () {
     if (!error) {
       // query was successful
       console.error(result.entries);
-      console.error('R1 ='+ result.entries);
-      
+      console.error('R1 =' + result.entries);
+
       if (result.entries) {
         for (var index in result.entries) {
           // text is available in result[index].messageText
