@@ -126,7 +126,7 @@ var saveSubscriptionInTbl = function (subscription) {
     PartitionKey: entGen.String('subscriptionInfo'),
     RowKey: entGen.String('1'),
     description: entGen.String('subscription'),
-    data: entGen.stringify(subscription),
+    data: entGen.String(JSON.stringify(subscription)),
     dueDate: entGen.DateTime(new Date(Date.UTC(2015, 6, 20))),
   };
   tableSvc.insertEntity('userSubscription', task, function (error, result, response) {
