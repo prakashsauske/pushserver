@@ -147,9 +147,9 @@ var getSubscriptionFromTbl = function () {
   tableSvc.queryEntities('userSubscription', query, null, function (error, result, response) {
     if (!error) {
       // query was successful
-      console.error(result.entries);
+      console.error('R1 ='+result.entries);
       
-      if (!result.entries) {
+      if (result.entries) {
         for (var index in result.entries) {
           // text is available in result[index].messageText
           var message = result.entries[index];
