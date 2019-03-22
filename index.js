@@ -18,7 +18,9 @@ const publicVapidKey = 'BLQUKIB-Tiq4tAtDmVMxMulUmM_rZHkp_OM5sRp_1j42G1DA1RGWX7i7
 const privateVapidKey = 'NioPoyOmz23Orxh5QOZtQasOZ6Pom4mlGH2bHn7cjXE';
 
 
-var queueSvc = azure.createQueueService();
+//var queueSvc = azure.createQueueService();
+var retryOperations = new azure.ExponentialRetryPolicyFilter();
+var queueSvc = azure.createQueueService().withFilter(retryOperations);
 
 webpush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey);
 
@@ -101,9 +103,9 @@ app.get('/queue', function (req, res) {
   });
   console.error('msg'+msg);
   sendNotificationForAll();
-  res.send(JSON.stringify({
+  res.status(201).json({
     statusCode: status
-  }));
+  });
 });
 
 app.get('/dqueue', function (req, res) {
@@ -120,9 +122,9 @@ app.get('/dqueue', function (req, res) {
       });
     }
   });
-  res.send(JSON.stringify({
+  res.status(201).json({
     statusCode: status
-  }));
+  });
 });
 
 const port = process.env.PORT || process.env.port || 5000;
