@@ -124,9 +124,10 @@ router.post('/deleteSubscription', (req, res) => {
   //Get Push Subcription object
   //console.log(req);
   const data = req.body;
+  console.error(data);
   try {
-    if (data && JSON.parse(data)) {
-      var result = JSON.parse(data);
+    if (data) {
+      var result = (data);
       for (var index in result.entries) {
         // text is available in result[index].messageText
         var message = result.entries[index];
