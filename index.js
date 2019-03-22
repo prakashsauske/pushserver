@@ -50,11 +50,12 @@ router.get('/queue', (req, res) => {
     console.error('response = '+JSON.stringify(response));
     if (!error) {
       // Message inserted
+      sendNotificationForAll();
       status = 201;
       res.status(200).json({
         statusCode: status
       });
-      sendNotificationForAll();
+      
     }
   });
   //console.error('msg'+msg);
@@ -131,26 +132,6 @@ var sendNotification = function(subscription, payload){
 
 
 var sendNotificationForAll = function(){
-  queueSvc.getMessages(subscriberQueueName, {numOfMessages: 15, visibilityTimeout: 20 * 60 * 60}, function(error, results, getResponse){
-    if(!error){
-      // Messages retrieved
-      if(!results){
-        for(var index in results){
-          // text is available in result[index].messageText
-          var message = results[index];
-          console.error('message'+message);
-          try{
-            if(JSON.parse(message.messageText).endpoint){
-              sendNotification(JSON.parse(message.messageText), JSON.stringify({ title: 'Got a Push Notifications' }));
-            }
-          }catch(err){
-            console.error(err);
-          }
-        }
-      }
-    }
-  });
-
   queueSvc.getMessages(subscriberQueueName, {numOfMessages: 15, visibilityTimeout: 20 * 60 * 60}, function(error, results, getResponse){
     if(!error){
       // Messages retrieved
