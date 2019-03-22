@@ -26,7 +26,7 @@ const privateVapidKey = 'NioPoyOmz23Orxh5QOZtQasOZ6Pom4mlGH2bHn7cjXE';
 //var queueSvc = azure.createQueueService();
 var retryOperations = new azure.ExponentialRetryPolicyFilter();
 var queueSvc = azure.createQueueService().withFilter(retryOperations);
-
+var tableSvc = azure.createTableService();
 webpush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey);
 let router = expres.Router();
 
@@ -60,20 +60,16 @@ router.get('/queue', (req, res) => {
 
     }
   });
-  //console.error('msg'+msg);
- /*  
-  queueSvc.createMessage(alretsQueueName, JSON.stringify({notify:msg}), function (error, results, response) {
-    console.error(error);
-    if (!error) {
-      // Message inserted
-      status = successCd;
-    }
-  });
-  console.error('msg'+msg);
-  sendNotificationForAll(); */
-  /* res.status(200).json({
+});
+
+router.get('/viewTbl', (req, res) => {
+  var status = 200;
+  
+  console.error('viewTbl');
+  getSubscriptionFromTbl();
+  res.status(200).json({
     statusCode: status
-  }) */;
+  });
 });
 
 router.get('/dqueue', function (req, res) {
@@ -108,7 +104,7 @@ router.post('/subscribe', (req, res) => {
 
   console.error(subscription);
   //console.error(subscriberQueueName);
-
+  saveSubscriptionInTbl(subscription);
   //Pass object into sendnotification function
   queueSvc.createMessage("wow-sub-message", JSON.stringify(subscription), function (error, results, response) {
     console.error(error);
@@ -124,6 +120,37 @@ router.post('/subscribe', (req, res) => {
   res.status(201).json({});
 });
 
+var saveSubscriptionInTbl = function (subscription) {
+  var entGen = azure.TableUtilities.entityGenerator;
+  var task = {
+    PartitionKey: entGen.String('subscriptionInfo'),
+    RowKey: entGen.String('1'),
+    description: entGen.String('subscription'),
+    data: entGen.stringify(subscription),
+    dueDate: entGen.DateTime(new Date(Date.UTC(2015, 6, 20))),
+  };
+  tableSvc.insertEntity('userSubscription', task, function (error, result, response) {
+    if (!error) {
+      // Entity updated
+      console.error('entry inserted')
+    } else {
+      console.error(error);
+      console.error('entry failed');
+    }
+  });
+}
+
+var getSubscriptionFromTbl = function () {
+  var query = new azure.TableQuery()
+    .top(5)
+    .where('PartitionKey eq ?', 'subscriptionInfo');
+  tableSvc.queryEntities('userSubscription', query, null, function (error, result, response) {
+    if (!error) {
+      // query was successful
+      console.error(result.entries);
+    }
+  });
+}
 
 var sendNotification = function (subscription, payload) {
   console.error('subscription' + subscription);
@@ -134,25 +161,6 @@ var sendNotification = function (subscription, payload) {
 
 
 var sendNotificationForAll = function () {
-  queueSvc.getMessages(subscriberQueueName, { numOfMessages: 15 }, function (error, results, getResponse) {
-    if (!error) {
-      // Messages retrieved
-      if (!results) {
-        for (var index in results) {
-          // text is available in result[index].messageText
-          var message = results[index];
-          console.error('message' + message);
-          try {
-            if (JSON.parse(message.messageText).endpoint) {
-              sendNotification(JSON.parse(message.messageText), JSON.stringify({ title: 'Got a Push Notifications' }));
-            }
-          } catch (err) {
-            console.error(err);
-          }
-        }
-      }
-    }
-  });
   queueSvc.getMessages("wow-sub-message", { numOfMessages: 15, visibilityTimeout: 20 * 60 * 60 }, function (error, results, getResponse) {
     if (!error) {
       // Messages retrieved
