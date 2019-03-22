@@ -94,6 +94,14 @@ app.get('/queue', function (req, res) {
     msg = 'SOH Alert';
   }
   console.error('alretsQueueName'+alretsQueueName);
+  queueSvc.createMessage(alretsQueueName, JSON.stringify({notify:msg}), function (error, results, response) {
+    console.error(error);
+    if (!error) {
+      // Message inserted
+      status = successCd;
+    }
+  });
+  console.error('msg'+msg);
  /*  
   queueSvc.createMessage(alretsQueueName, JSON.stringify({notify:msg}), function (error, results, response) {
     console.error(error);
