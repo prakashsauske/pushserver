@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 const alretsQueueName = "wow-msg-queue";
 const subscriberQueueName = "wow-sub-message";
 
-const successCd = 200;
+const successCd = 201;
 const errorCd = 500;
 
 const publicVapidKey = 'BLQUKIB-Tiq4tAtDmVMxMulUmM_rZHkp_OM5sRp_1j42G1DA1RGWX7i70JB0p9W7MOgY6-jFguPmIc7YiP4h93g';
@@ -83,7 +83,7 @@ app.get('/index', function (req, res) {
 });
 
 app.get('/queue', (req, res) => {
-  var status = errorCd;
+  var status = 500;
   var msg;
   try{
     msg = req.get('text');
@@ -100,7 +100,7 @@ app.get('/queue', (req, res) => {
     console.error('response = '+response);
     if (!error) {
       // Message inserted
-      status = successCd;
+      status = 201;
     }
   });
   console.error('msg'+msg);
