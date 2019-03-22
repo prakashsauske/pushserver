@@ -17,11 +17,11 @@ const errorCd = 500;
 
 const publicVapidKey = 'BLQUKIB-Tiq4tAtDmVMxMulUmM_rZHkp_OM5sRp_1j42G1DA1RGWX7i70JB0p9W7MOgY6-jFguPmIc7YiP4h93g';
 const privateVapidKey = 'NioPoyOmz23Orxh5QOZtQasOZ6Pom4mlGH2bHn7cjXE';
-const blobStorage = new botbuilder_azure.BlobStorage({
+/* const blobStorage = new botbuilder_azure.BlobStorage({
   containerName: 'firstbotblog',
   storageAccessKey: process.env.STORAGEKEY,
   storageAccountOrConnectionString: 'DefaultEndpointsProtocol=https;AccountName=firstbotblog;AccountKey=H+/1D+WykGbvVD0PJ3E0HAx5Pu53mJtJ67MhPEdegFGs1dx4w4lmAU+VSraTAUiovx9jChE4TNA86FEUC3g2gA==;EndpointSuffix=core.windows.net'
-});
+}); */
 
 //var queueSvc = azure.createQueueService();
 var retryOperations = new azure.ExponentialRetryPolicyFilter();
