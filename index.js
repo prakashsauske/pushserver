@@ -23,9 +23,78 @@ var retryOperations = new azure.ExponentialRetryPolicyFilter();
 var queueSvc = azure.createQueueService().withFilter(retryOperations);
 
 webpush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey);
+let router = express.Router();
+
+router.get('/', function (req, res) {
+  res.sendfile(path.join(__dirname, '/index.html'));
+});
+router.get('/index', function (req, res) {
+  res.sendfile(path.join(__dirname, './index.html'));
+});
+
+router.get('/queue', (req, res) => {
+  var status = 500;
+  var msg;
+  try{
+    msg = req.get('text');
+  }catch(err){
+    console.log(err);
+  }
+  if(msg == undefined || msg == null){
+    msg = 'SOH Alert';
+  }
+  console.error('alretsQueueName'+alretsQueueName);
+  queueSvc.createMessage(alretsQueueName,msg, function (error, results, response) {
+    console.error('error = '+error);
+    console.error('results = '+results);
+    console.error('response = '+response);
+    if (!error) {
+      // Message inserted
+      status = 201;
+      res.status(200).json({
+        statusCode: status
+      });
+    }
+  });
+  console.error('msg'+msg);
+ /*  
+  queueSvc.createMessage(alretsQueueName, JSON.stringify({notify:msg}), function (error, results, response) {
+    console.error(error);
+    if (!error) {
+      // Message inserted
+      status = successCd;
+    }
+  });
+  console.error('msg'+msg);
+  sendNotificationForAll(); */
+  /* res.status(200).json({
+    statusCode: status
+  }) */;
+});
+
+router.get('/dqueue', function (req, res) {
+  var status = errorCd;
+  queueSvc.getMessages(alretsQueueName, function (error, results, response) {
+    if (!error) {
+      // Message text is in results[0].messageText
+      var message = results[0];
+      queueSvc.deleteMessage(alretsQueueName, message.messageId, message.popReceipt, function (error, response) {
+        if (!error) {
+          //message deleted
+          status = successCd;
+        }
+      });
+    }
+  });
+  res.status(201).json({
+    statusCode: status
+  });
+});
+
+app.use('/',router);
 
 //Subcribe route
-app.post('/subscribe', (req, res) => {
+router.post('/subscribe', (req, res) => {
   //Get Push Subcription object
   //console.log(req);
   const subscription = req.body;
@@ -75,71 +144,7 @@ var sendNotificationForAll = function(){
     }
   });
 }
-app.get('/', function (req, res) {
-  res.sendfile(path.join(__dirname, '/index.html'));
-});
-app.get('/index', function (req, res) {
-  res.sendfile(path.join(__dirname, './index.html'));
-});
 
-app.get('/queue', (req, res) => {
-  var status = 500;
-  var msg;
-  try{
-    msg = req.get('text');
-  }catch(err){
-    console.log(err);
-  }
-  if(msg == undefined || msg == null){
-    msg = 'SOH Alert';
-  }
-  console.error('alretsQueueName'+alretsQueueName);
-  queueSvc.createMessage(alretsQueueName,msg, function (error, results, response) {
-    console.error('error = '+error);
-    console.error('results = '+results);
-    console.error('response = '+response);
-    if (!error) {
-      // Message inserted
-      status = 201;
-      res.status(200).json({
-        statusCode: status
-      });
-    }
-  });
-  console.error('msg'+msg);
- /*  
-  queueSvc.createMessage(alretsQueueName, JSON.stringify({notify:msg}), function (error, results, response) {
-    console.error(error);
-    if (!error) {
-      // Message inserted
-      status = successCd;
-    }
-  });
-  console.error('msg'+msg);
-  sendNotificationForAll(); */
-  /* res.status(200).json({
-    statusCode: status
-  }) */;
-});
-
-app.get('/dqueue', function (req, res) {
-  var status = errorCd;
-  queueSvc.getMessages(alretsQueueName, function (error, results, response) {
-    if (!error) {
-      // Message text is in results[0].messageText
-      var message = results[0];
-      queueSvc.deleteMessage(alretsQueueName, message.messageId, message.popReceipt, function (error, response) {
-        if (!error) {
-          //message deleted
-          status = successCd;
-        }
-      });
-    }
-  });
-  res.status(201).json({
-    statusCode: status
-  });
-});
 
 const port = process.env.PORT || process.env.port || 5000;
 app.listen(port, () => console.log(`server start on port ${port} `));
