@@ -82,7 +82,7 @@ app.get('/index', function (req, res) {
   res.sendfile(path.join(__dirname, './index.html'));
 });
 
-app.get('/queue', function (req, res) {
+app.get('/queue', (req, res) => {
   var status = errorCd;
   var msg;
   try{
@@ -94,8 +94,10 @@ app.get('/queue', function (req, res) {
     msg = 'SOH Alert';
   }
   console.error('alretsQueueName'+alretsQueueName);
-  queueSvc.createMessage(alretsQueueName, JSON.stringify({notify:msg}), function (error, results, response) {
-    console.error(error);
+  queueSvc.createMessage(alretsQueueName,msg, function (error, results, response) {
+    console.error('error = '+error);
+    console.error('results = '+results);
+    console.error('response = '+response);
     if (!error) {
       // Message inserted
       status = successCd;
