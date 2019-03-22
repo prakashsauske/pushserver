@@ -147,7 +147,8 @@ var getSubscriptionFromTbl = function () {
   tableSvc.queryEntities('userSubscription', query, null, function (error, result, response) {
     if (!error) {
       // query was successful
-      console.error('R1 ='+result.entries);
+      console.error(result.entries);
+      console.error('R1 ='+ result.entries);
       
       if (result.entries) {
         for (var index in result.entries) {
@@ -155,6 +156,8 @@ var getSubscriptionFromTbl = function () {
           var message = result.entries[index];
           console.error('message' + message);
           try {
+            console.error(message.data);
+            console.error(message.data['_']);
             if (JSON.parse(message).endpoint) {
               sendNotification(JSON.parse(message), JSON.stringify({ title: 'Got a Push Notifications' }));
             }
