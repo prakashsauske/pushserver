@@ -28,9 +28,6 @@ app.post('/subscribe', (req, res) => {
   //console.log(req);
   const subscription = req.body;
 
-  //send 201 - resource created
-  res.status(201).json({});
-
   //create payload
   const payload = JSON.stringify({ title: 'Successfully Subscribed With Push Notifications' });
 
@@ -48,6 +45,8 @@ app.post('/subscribe', (req, res) => {
     }
   });
   //sendNotification(subscription,payload);
+  //send 201 - resource created
+  res.status(201).json({});
 });
 
 
@@ -60,14 +59,16 @@ var sendNotification = function(subscription, payload){
 
 
 var sendNotificationForAll = function(){
-  queueSvc.getMessages(subscriberQueueName, {numOfMessages: 15, visibilityTimeout: 5 * 60}, function(error, results, getResponse){
+  queueSvc.getMessages(subscriberQueueName, {numOfMessages: 15, visibilityTimeout: 20 * 60 * 60}, function(error, results, getResponse){
     if(!error){
       // Messages retrieved
-      for(var index in results){
-        // text is available in result[index].messageText
-        var message = results[index];
-        console.error(message);
-        sendNotification(message, JSON.stringify({ title: 'Got a Push Notifications' }));
+      if(!results){
+        for(var index in results){
+          // text is available in result[index].messageText
+          var message = results[index];
+          console.error(message);
+          sendNotification(JSON.parse(message.messageText), JSON.stringify({ title: 'Got a Push Notifications' }));
+        }
       }
     }
   });
@@ -91,7 +92,8 @@ app.get('/queue', function (req, res) {
     msg = 'SOH Alert';
   }
   console.error(alretsQueueName);
-  queueSvc.createMessage(alretsQueueName, msg, function (error, results, response) {
+  queueSvc.createMessage(alretsQueueName, JSON.stringify({notify:msg}), function (error, results, response) {
+    console.error(error);
     if (!error) {
       // Message inserted
       status = successCd;
