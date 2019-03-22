@@ -23,7 +23,7 @@ var retryOperations = new azure.ExponentialRetryPolicyFilter();
 var queueSvc = azure.createQueueService().withFilter(retryOperations);
 
 webpush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey);
-let router = express.Router();
+let router = expres.Router();
 
 router.get('/', function (req, res) {
   res.sendfile(path.join(__dirname, '/index.html'));
