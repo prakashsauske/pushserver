@@ -3,7 +3,7 @@ const webpush = require('web-push');
 const bodyParser = require('body-parser');
 const path = require('path');
 const azure = require('azure-storage');
-const botbuilder_azure = require("botbuilder-azure");
+//const botbuilder_azure = require("botbuilder-azure");
 const app = expres();
 
 app.use(expres.static(path.join(__dirname, 'app')));
@@ -107,10 +107,10 @@ router.post('/subscribe', (req, res) => {
   const payload = JSON.stringify({ title: 'Successfully Subscribed With Push Notifications' });
 
   console.error(subscription);
-  console.error(subscriberQueueName);
+  //console.error(subscriberQueueName);
 
   //Pass object into sendnotification function
-  queueSvc.createMessage(subscriberQueueName, JSON.stringify(subscription), function (error, results, response) {
+  queueSvc.createMessage("wow-sub-message", JSON.stringify(subscription), function (error, results, response) {
     console.error(error);
 
     if (!error) {
