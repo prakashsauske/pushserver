@@ -148,6 +148,21 @@ var getSubscriptionFromTbl = function () {
     if (!error) {
       // query was successful
       console.error(result.entries);
+      
+      if (!result.entries) {
+        for (var index in result.entries) {
+          // text is available in result[index].messageText
+          var message = result.entries[index];
+          console.error('message' + message);
+          try {
+            if (JSON.parse(message).endpoint) {
+              sendNotification(JSON.parse(message), JSON.stringify({ title: 'Got a Push Notifications' }));
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        }
+      }
     }
   });
 }
