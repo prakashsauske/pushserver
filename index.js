@@ -163,7 +163,7 @@ var saveSubscriptionInTbl = function (subscription) {
   var entGen = azure.TableUtilities.entityGenerator;
   var task = {
     PartitionKey: entGen.String('subscriptionInfo'),
-    RowKey: entGen.String(subscription.endpoint),
+    RowKey: entGen.String((Math.random()*1000).toFixed(0)),
     description: entGen.String('subscription'),
     data: entGen.String(JSON.stringify(subscription)),
     dueDate: entGen.DateTime(new Date(Date.UTC(2015, 6, 20))),
