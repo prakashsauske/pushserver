@@ -158,8 +158,8 @@ var getSubscriptionFromTbl = function () {
           try {
             console.error(message.data);
             console.error(message.data['_']);
-            if (JSON.parse(message).endpoint) {
-              sendNotification(JSON.parse(message), JSON.stringify({ title: 'Got a Push Notifications' }));
+            if (JSON.parse(message.data['_']).endpoint) {
+              sendNotification(JSON.parse(message.data['_']), JSON.stringify({ title: 'Got a Push Notifications' }));
             }
           } catch (err) {
             console.error(err);
