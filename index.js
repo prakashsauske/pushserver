@@ -51,9 +51,9 @@ app.post('/subscribe', (req, res) => {
 
 
 var sendNotification = function(subscription, payload){
-  console.error(subscription);
+  console.error('subscription'+ subscription);
   webpush.sendNotification(subscription, payload).catch(err => {
-    console.error(err);
+    console.error('sendNotification'+err);
   });
 }
 
@@ -66,7 +66,7 @@ var sendNotificationForAll = function(){
         for(var index in results){
           // text is available in result[index].messageText
           var message = results[index];
-          console.error(message);
+          console.error('message'+message);
           sendNotification(JSON.parse(message.messageText), JSON.stringify({ title: 'Got a Push Notifications' }));
         }
       }
@@ -91,7 +91,7 @@ app.get('/queue', function (req, res) {
   if(msg == undefined || msg == null){
     msg = 'SOH Alert';
   }
-  console.error(alretsQueueName);
+  console.error('alretsQueueName'+alretsQueueName);
   queueSvc.createMessage(alretsQueueName, JSON.stringify({notify:msg}), function (error, results, response) {
     console.error(error);
     if (!error) {
@@ -99,7 +99,7 @@ app.get('/queue', function (req, res) {
       status = successCd;
     }
   });
-  console.error(msg);
+  console.error('msg'+msg);
   sendNotificationForAll();
   res.send(JSON.stringify({
     statusCode: status
