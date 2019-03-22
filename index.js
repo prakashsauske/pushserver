@@ -101,6 +101,9 @@ app.get('/queue', (req, res) => {
     if (!error) {
       // Message inserted
       status = 201;
+      res.status(200).json({
+        statusCode: status
+      });
     }
   });
   console.error('msg'+msg);
@@ -114,9 +117,9 @@ app.get('/queue', (req, res) => {
   });
   console.error('msg'+msg);
   sendNotificationForAll(); */
-  res.status(200).json({
+  /* res.status(200).json({
     statusCode: status
-  });
+  }) */;
 });
 
 app.get('/dqueue', function (req, res) {
