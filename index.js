@@ -94,9 +94,7 @@ app.get('/queue', function (req, res) {
     msg = 'SOH Alert';
   }
   console.error('alretsQueueName'+alretsQueueName);
-  res.status(201).json({
-    statusCode: status
-  });
+ /*  
   queueSvc.createMessage(alretsQueueName, JSON.stringify({notify:msg}), function (error, results, response) {
     console.error(error);
     if (!error) {
@@ -105,14 +103,14 @@ app.get('/queue', function (req, res) {
     }
   });
   console.error('msg'+msg);
-  sendNotificationForAll();
+  sendNotificationForAll(); */
+  res.status(200).json({
+    statusCode: status
+  });
 });
 
 app.get('/dqueue', function (req, res) {
   var status = errorCd;
-  res.status(201).json({
-    statusCode: status
-  });
   queueSvc.getMessages(alretsQueueName, function (error, results, response) {
     if (!error) {
       // Message text is in results[0].messageText
@@ -124,6 +122,9 @@ app.get('/dqueue', function (req, res) {
         }
       });
     }
+  });
+  res.status(201).json({
+    statusCode: status
   });
 });
 
