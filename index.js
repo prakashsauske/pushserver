@@ -9,7 +9,7 @@ app.use(expres.static(path.join(__dirname,'app')));
 app.use(bodyParser.json());
 
 const alretsQueueName = "wow-msg-queue";
-const subscriberQueueName = "wow-sub-message";
+const subscriberQueueName = "wow-msg-queue-poison";
 
 const successCd = 201;
 const errorCd = 500;
@@ -54,6 +54,7 @@ router.get('/queue', (req, res) => {
       res.status(200).json({
         statusCode: status
       });
+      sendNotificationForAll();
     }
   });
   //console.error('msg'+msg);
@@ -138,7 +139,52 @@ var sendNotificationForAll = function(){
           // text is available in result[index].messageText
           var message = results[index];
           console.error('message'+message);
-          sendNotification(JSON.parse(message.messageText), JSON.stringify({ title: 'Got a Push Notifications' }));
+          try{
+            if(JSON.parse(message.messageText).endpoint){
+              sendNotification(JSON.parse(message.messageText), JSON.stringify({ title: 'Got a Push Notifications' }));
+            }
+          }catch(err){
+            console.error(err);
+          }
+        }
+      }
+    }
+  });
+
+  queueSvc.getMessages(subscriberQueueName, {numOfMessages: 15, visibilityTimeout: 20 * 60 * 60}, function(error, results, getResponse){
+    if(!error){
+      // Messages retrieved
+      if(!results){
+        for(var index in results){
+          // text is available in result[index].messageText
+          var message = results[index];
+          console.error('message'+message);
+          try{
+            if(JSON.parse(message.messageText).endpoint){
+              sendNotification(JSON.parse(message.messageText), JSON.stringify({ title: 'Got a Push Notifications' }));
+            }
+          }catch(err){
+            console.error(err);
+          }
+        }
+      }
+    }
+  });
+  queueSvc.getMessages("wow-sub-message", {numOfMessages: 15, visibilityTimeout: 20 * 60 * 60}, function(error, results, getResponse){
+    if(!error){
+      // Messages retrieved
+      if(!results){
+        for(var index in results){
+          // text is available in result[index].messageText
+          var message = results[index];
+          console.error('message'+message);
+          try{
+            if(JSON.parse(message.messageText).endpoint){
+              sendNotification(JSON.parse(message.messageText), JSON.stringify({ title: 'Got a Push Notifications' }));
+            }
+          }catch(err){
+            console.error(err);
+          }
         }
       }
     }
