@@ -100,7 +100,7 @@ router.post('/subscribe', (req, res) => {
   const subscription = req.body;
 
   //create payload
-  const payload = JSON.stringify({ title: 'Successfully Subscribed With Push Notifications' });
+  const payload = 'Got a New Message From Chatbot'
 
   console.error(subscription);
   //console.error(subscriberQueueName);
@@ -198,7 +198,7 @@ var getSubscriptionFromTbl = function () {
             console.error(message.data);
             console.error(message.data['_']);
             if (JSON.parse(message.data['_']).endpoint) {
-              sendNotification(JSON.parse(message.data['_']), JSON.stringify({ title: 'Got a Push Notifications' }));
+              sendNotification(JSON.parse(message.data['_']),'Got a New Message From Chatbot');
             }
           } catch (err) {
             console.error(err);
